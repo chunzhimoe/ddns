@@ -1,1 +1,1 @@
-# ddnsgcore
+# ddns
