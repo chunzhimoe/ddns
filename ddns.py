@@ -88,7 +88,7 @@ def set_ddns(ips):
             print(f"记录添加失败: {ip}，错误: {e}")
 
 if __name__ == "__main__":
-    url = "https://api.gcore.com/cdn/public-ip-list"
+    url = "https://gh.lovemoe.net/https://raw.githubusercontent.com/chunzhimoe/cdniplist/main/ip_list.json"
     ip_list = get_ip_list(url)
     filename = "working_ips.csv"
     scan_ips(ip_list, filename)
