@@ -46,6 +46,25 @@ def ping(ip):
     elapsed_time = (end_time - start_time) * 1000  # 转换为毫秒
     return is_alive, elapsed_time
 
+def check_ip(ip, domain):
+    try:
+        headers = {"Host": domain}
+        response = requests.get(f"https://{ip}", headers=headers, timeout=5)
+        if response.status_code == 200:  # 检查状态码是否为 200
+            return True
+    except Exception as e:
+        print(f"Error accessing {ip}: {e}")
+    return False
+
+def check_ip_443(ip):
+    try:
+        response = requests.get(f"http://{ip}:443", timeout=5)
+        if response.status_code == 400:  # 检查状态码是否为 400
+            return True
+    except Exception as e:
+        print(f"Error accessing {ip}: {e}")
+    return False
+
 def scan_ips(ip_list, filename):
     total_ips = len(ip_list)
     progress_bar = tqdm(total=total_ips, desc="扫描进度", ncols=100)
@@ -57,12 +76,8 @@ def scan_ips(ip_list, filename):
         for current_ip in ip_list:
             is_alive, elapsed_time = ping(str(current_ip))
             if is_alive and elapsed_time < 150:  # 添加延迟小于 150ms 的条件
-                try:
-                    response = requests.get(f"http://{current_ip}:443", timeout=5)
-                    if response.status_code == 400:  # 检查状态码是否为 400
-                        csvwriter.writerow([str(current_ip)])  # 将 IP 地址写入 CSV 文件
-                except Exception as e:
-                    print(f"Error accessing {current_ip}: {e}")
+                if check_ip(str(current_ip), "hello.v1.1314882.xyz") and check_ip_443(str(current_ip)):  # 检查IP地址和指定域名是否可用
+                    csvwriter.writerow([str(current_ip)])  # 将 IP 地址写入 CSV 文件
 
             progress_bar.update(1)
     progress_bar.close()
